@@ -1,4 +1,13 @@
 {
+	"name": "fridde/router",
+    "description": "A wrapper for symfony/routing",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "fridde",
+            "email": "f@hehl.se"
+        }
+    ],
     "require": {
         "symfony/routing": "^4.2"
     }
