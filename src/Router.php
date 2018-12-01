@@ -40,14 +40,25 @@ class Router
         $args['host'] = null;
         $args['schemes'] = [];
         $args['condition'] = null;
-        $args['requirements'] = [];
+
 
         foreach($routes as $name => $route_values){
             $args['path'] = $route_values[1];
 
+            $args['defaults'] = [];
             $args['defaults']['_controller'] = $this->createControllerName($route_values[2]);
             $args['defaults']['_method'] = $route_values[3] ?? null;
-            $args['defaults'] += array_fill_keys(array_slice($route_values, 4), null);
+            $args['requirements'] = [];
+
+            $defaults = (array) ($route_values[4] ?? []);
+            array_walk($defaults, function($val, $key) use (&$args){
+                if(is_int($key)){
+                    $args['defaults'][$val] = null;
+                } else {
+                    $args['defaults'][$key] = null;
+                    $args['requirements'][$key] = $val;
+                }
+            });
 
             $args['methods'] = explode('|', $route_values[0]);
 
