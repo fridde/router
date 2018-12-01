@@ -34,16 +34,31 @@ class Router
 
     public function addAllRoutes(array $routes): void
     {
+        $arg_order = ['path','defaults','requirements','options','host','schemes','methods','condition'];
+
+        $args['options'] = [];
+        $args['host'] = null;
+        $args['schemes'] = [];
+        $args['condition'] = null;
+        $args['requirements'] = [];
+
         foreach($routes as $name => $route_values){
-            $http_methods = explode('|', $route_values[0]);
-            $path = $route_values[1];
+            $args['path'] = $route_values[1];
 
-            $defaults['_controller'] = $this->createControllerName($route_values[2]);
-            $defaults['_method'] = $route_values[3] ?? null;
+            $args['defaults']['_controller'] = $this->createControllerName($route_values[2]);
+            $args['defaults']['_method'] = $route_values[3] ?? null;
+            $args['defaults'] += array_fill_keys(array_slice($route_values, 4), null);
 
-            $route = new Route($path, $defaults, [], [], [], [], $http_methods);
+            $args['methods'] = explode('|', $route_values[0]);
 
-            $this->route_collection->add($route);
+            // reordering the array
+            $ordered_args = array_map(function($i) use ($args){
+                return $args[$i];
+            }, $arg_order);
+
+            $route = new Route(...$ordered_args);
+
+            $this->route_collection->add($name, $route);
         }
     }
 
