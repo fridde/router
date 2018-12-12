@@ -83,9 +83,15 @@ class Router
         return [$p['_controller'], $p['_method'], $args];
     }
 
-    public function generate(string $route_name, array $args = []): string
+    public function generate(string $route_name, array $args = [], $absolute = true): string
     {
-        return $this->getUrlGenerator()->generate($route_name, $args);
+        $args = [$route_name, $args];
+
+        if($absolute){
+            $args[] = UrlGenerator::ABSOLUTE_URL;
+        }
+
+        return $this->getUrlGenerator()->generate(...$args);
     }
 
     private function getUrlGenerator(): UrlGenerator
