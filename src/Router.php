@@ -19,7 +19,7 @@ class Router
     private $route_collection;
     private $controller_namespace;
 
-    public function __construct(string $base_path, array $routes = [], string $controller_namespace = '\\')
+    public function __construct(string $base_path, array $routes = [], string $controller_namespace = '\\', array $route_defaults = [])
     {
         $this->request = Request::createFromGlobals();
         $this->request_context = new RequestContext($base_path);
@@ -28,19 +28,22 @@ class Router
 
         $this->route_collection = new RouteCollection();
 
-        $this->addAllRoutes($routes);
+        $this->addAllRoutes($routes, $route_defaults);
         $this->url_matcher = new UrlMatcher($this->route_collection, $this->request_context);
     }
 
-    public function addAllRoutes(array $routes): void
+    public function addAllRoutes(array $routes, array $defaults = []): void
     {
         $arg_order = ['path','defaults','requirements','options','host','schemes','methods','condition'];
 
-        $args['options'] = [];
-        $args['host'] = null;
-        $args['schemes'] = [];
-        $args['condition'] = null;
+        $base_defaults = [
+            'options' => [],
+            'hosts' => null,
+            'schemes' => ['https'],
+            'condition' => null
+        ];
 
+        $args = $defaults + $base_defaults;
 
         foreach($routes as $name => $route_values){
             $args['path'] = $route_values[1];
