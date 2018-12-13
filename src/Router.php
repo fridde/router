@@ -38,7 +38,7 @@ class Router
 
         $base_defaults = [
             'options' => [],
-            'hosts' => null,
+            'host' => null,
             'schemes' => ['https'],
             'condition' => null
         ];
